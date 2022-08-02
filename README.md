@@ -1,7 +1,10 @@
 Single Responsibility Principle
 ===============================
 
-Additional Typescript exercise on SOLID's SRP, provided by the King of the Diksmuidelaan. Original exercise explanation below (in dutch only, sorry). 
+Additional Typescript exercise on SOLID's SRP, provided by the King of the Diksmuidelaan. Original exercise explanation below (in dutch only, sorry).<br>
+Link: https://jelle-vdp.github.io/typescript-srp-ticketorder/
+
+## Exercise explanation
 
 Het Single Responsibility Principe helpt je bij beslissingen over hoe je de vereiste functionaliteit van een applicatie
 over verschillende klassen verdeeld. Het idee bestaat er uit de functionaliteit van een klasse maar relevant is voor bijvoorbeeld

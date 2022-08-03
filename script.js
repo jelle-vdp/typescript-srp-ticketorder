@@ -1,9 +1,21 @@
 class Event {
-    constructor() {
-        this._ticketPrice = 22;
-        this._discount = 0.5;
-        this._maxAmountOfTickets = 100;
+    constructor(lineUp, venue, date, ticketPrice, discount, maxAmountOfTickets) {
         this._amountOfTicketsBooked = 0;
+        this._lineUp = lineUp;
+        this._venue = venue;
+        this._date = date;
+        this._ticketPrice = ticketPrice;
+        this._discount = discount;
+        this._maxAmountOfTickets = maxAmountOfTickets;
+    }
+    get lineUp() {
+        return this._lineUp;
+    }
+    get venue() {
+        return this._venue;
+    }
+    get date() {
+        return this._date;
     }
     get ticketPrice() {
         return this._ticketPrice;
@@ -29,6 +41,9 @@ class CustomerService {
 class ReportGenerator {
     generate(event) {
         return {
+            lineUp: event.lineUp,
+            venue: event.venue,
+            date: event.date,
             ticketPrice: event.ticketPrice,
             ticketsSold: event.amountOfTicketsBooked,
             totalRevenue: this.calculateTotalRevenue(event.amountOfTicketsBooked, event.ticketPrice),
@@ -43,28 +58,39 @@ class ReportGenerator {
     }
     sellTickets(numberOfTickets, event) {
         if (event.amountOfTicketsBooked + numberOfTickets > event.maxAmountOfTickets) {
-            throw new Error("Too many tickets sold!");
+            alert("Sorry, we can't sell you that many tickets");
         }
         else {
             event.amountOfTicketsBooked = event.amountOfTicketsBooked + numberOfTickets;
         }
     }
 }
-const event = new Event();
+const event = new Event(["Viagra Boys", "Iceage"], "Het Bos", new Date(2022, 7, 23, 20, 30), 24, 0.5, 200);
 const customerService = new CustomerService();
 const reportGenerator = new ReportGenerator();
+const eventInformation = document.getElementById("event-information");
 const amountTicketsEl = document.getElementById("amount-tickets");
 const buyTicketsBtn = document.getElementById("order-submit");
 const orderTarget = document.getElementById("order-target");
+const eventBandsString = event.lineUp.map(band => band).join(" + ");
+eventInformation.innerText = `${eventBandsString} at ${event.venue} on ${event.date.toLocaleDateString()}`;
 buyTicketsBtn.addEventListener("click", () => {
     const amountTickets = parseInt(amountTicketsEl.value);
-    const price = customerService.calculatePrice(amountTickets, event);
-    orderTarget.innerText = `Total price: ${price}`;
-    reportGenerator.sellTickets(amountTickets, event);
+    if (event.amountOfTicketsBooked + amountTickets > event.maxAmountOfTickets) {
+        alert(`You can't buy that much tickets, there are only: ${event.maxAmountOfTickets - event.amountOfTicketsBooked} tickets left`);
+        return;
+    }
+    else {
+        const price = customerService.calculatePrice(amountTickets, event);
+        orderTarget.innerText = `You've bought ${amountTickets} tickets for ${eventBandsString} in ${event.venue}. The total price is: ${price}`;
+        reportGenerator.sellTickets(amountTickets, event);
+    }
 });
 const generateReportBtn = document.getElementById("generate-report");
 const reportTarget = document.getElementById("report-target");
 generateReportBtn.addEventListener("click", () => {
     const report = reportGenerator.generate(event);
-    reportTarget.innerText = `Total revenue: ${report.totalRevenue} / Total costs: ${report.costs} / Total tickets sold: ${report.ticketsSold}`;
+    const lineUp = report.lineUp.map(band => band).join(" + ");
+    reportTarget.innerText = `${lineUp} in ${report.venue} on ${report.date.toLocaleDateString()}: total revenue: ${report.totalRevenue}, total costs: ${report.costs} & total tickets sold: ${report.ticketsSold}`;
 });
+export {};
